@@ -14,12 +14,14 @@ export const Websocket = () => {
 
   useEffect(() => {
     socket.on('connect', () => {
+      console.log(socket);
+
       console.log('Connected!');
     })
     socket.on('onMessage', (newMessage: MessagePayload) => {
       console.log('onMessage event received!');
       console.log({ newMessage });
-      setMessages((prev) => [...prev, newMessage]);
+      setMessages((prev) => [newMessage, ...prev]);
     });
     return () => {
       console.log('Unregistering Events...');
@@ -27,14 +29,6 @@ export const Websocket = () => {
       socket.off('onMessage');
     };
   }, []);
-
-  const hashCode = (s:string): number => {
-    var h = 0, l = s.length, i = 0;
-    if ( l > 0 )
-      while (i < l)
-        h = (h << 5) - h + s.charCodeAt(i++) | 0;
-    return h;
-  };
 
   const onSubmit = () => {
     socket.emit("newMessage", value);
@@ -49,22 +43,22 @@ export const Websocket = () => {
         Websocket Component
       </h1>
       <>
-        <input
+        {/* <input
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-        />
+        /> */}
         <button onClick={onSubmit}>Submit</button>
       </>
       <div>
         {messages.length === 0
           ? (<>
-            No Messages
+            No events
           </>)
           : (
             <>
-              {messages.map((msg) => (
-                <p key={hashCode(msg.content)}>{msg.content}</p>
+              {messages.map((msg, index) => (
+                <p key={index}>{msg.content}</p>
               ))}
             </>
           )
